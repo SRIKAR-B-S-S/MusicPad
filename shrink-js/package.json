@@ -1,0 +1,23 @@
+{
+  "name": "musicpad",
+  "version": "1.0.0",
+  "description": "A one-line DataURI micro-app for making music",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SRIKAR-B-S-S/MusicPad.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SRIKAR-B-S-S/MusicPad/issues"
+  },
+  "homepage": "https://github.com/SRIKAR-B-S-S/MusicPad#readme",
+  "devDependencies": {
+    "terser": "^5.51.2"
+  }
+}
