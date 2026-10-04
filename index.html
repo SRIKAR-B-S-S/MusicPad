@@ -41,7 +41,7 @@
         activePad = i;
         draw();
 
-        setTimeout(() => {
+        setTimeout(() => { // the selected pad will be active for 100ms, helpful for press-down effect
           activePad = -1;
           draw();
         }, 100);
@@ -61,8 +61,9 @@ window.ontouchstart = handleInput;
       const col = i % 3; //determines the col 1 or 2 or 3
       const row = Math.floor(i/3); //divides the index and uses GIF(down to the nearest integer). 0 for top row and 1 for bottom row
 
-      const px = startX + col * (padW+20);
-      const py = startY + row * (padH+20);
+      const press = (activePad === i) ? 4 : 0; // press=4 if the current pad is clicked by the user and press=0 when not clicked
+      const px = startX + col * (padW+20) + press; // so, when we add press for px(or py), the pad goes slightly towards bottom & right.. giving it a press-down effect
+      const py = startY + row * (padH+20) + press;
 
       ctx.fillStyle = '#1a1a1a';
       ctx.strokeStyle = pad.color; // respectve color of that pad
