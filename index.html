@@ -24,7 +24,38 @@
     {label: 'ELECTRO', color:'#dbe4ff'}
   ];
 
+  let activePad = -1;
+
+  const handleInput = (e) => {
+    const rect = c.getBoundingClientRect();
+    const posx = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+    const posy = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+  
+    pads.forEach((pad, i) => {
+      const col = i % 3;
+      const row = Math.floor(i / 3);
+      const px = startX + col * (padW+20);
+      const py = startY + row * (padH+20);
+
+      if (posx >= px && posx <= px+padW && posy >= py && posy <= py+padH) { //checks if the click/tap fell within the rectangle's coordinates
+        activePad = i;
+        draw();
+
+        setTimeout(() => {
+          activePad = -1;
+          draw();
+        }, 100);
+      }
+  });
+};
+
+window.onclick = handleInput;
+window.ontouchstart = handleInput;
+
   function draw() {
+
+    ctx.fillStyle = '#1f1f1f';
+    ctx.fillRect(0,0, c.width, c.height); //clear screen everytime before displaying the pads
 
     pads.forEach((pad, i) => {
       const col = i % 3; //determines the col 1 or 2 or 3
