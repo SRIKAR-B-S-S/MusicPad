@@ -3,13 +3,13 @@
 
 <script>
   
-  const context = c.getContext('2d');
+  const ctx = c.getContext('2d');
 
   c.width = window.innerWidth;
   c.height = window.innerHeight;
 
   const padW = 140;
-  const padH = 120;
+  const padH = 125;
   const gridW = 460; //planned for 3 columns so 3x140 + 2x20 = 460, like 3 pads of each w=140px and 2 gaps of 20px b/w them
   const gridH = 270; //planned for 2 rows, 120x2 + 30 = 270 (height of each pad is 120px and 1 gap of 3px b/w them)
   const startX = (c.width - gridW) / 2;
@@ -18,14 +18,41 @@
   const pads = [
     {label:'KICK', color:'#ffe066'},
     {label: 'SNARE', color:'#ffb347'},
-    {label: 'HI-HAT', color:'ff6b6b'},
-    {label: 'PIANO', color:'b19ffb'},
-    {label:'BASS', color:'74c0fc'},
+    {label: 'HI-HAT', color:'#ff6b6b'},
+    {label: 'PIANO', color:'#b19ffb'},
+    {label:'BASS', color:'#74c0fc'},
     {label: 'ELECTRO', color:'#dbe4ff'}
   ];
 
   function draw() {
-    //will be adding code here in the next commit!
+
+    pads.forEach((pad, i) => {
+      const col = i % 3; //determines the col 1 or 2 or 3
+      const row = Math.floor(i/3); //divides the index and uses GIF(down to the nearest integer). 0 for top row and 1 for bottom row
+
+      const px = startX + col * (padW+20);
+      const py = startY + row * (padH+20);
+
+      ctx.fillStyle = '#1a1a1a';
+      ctx.strokeStyle = pad.color; // respectve color of that pad
+      ctx.lineWidth = 3;
+      ctx.fillRect(px, py, padW, padH);
+      ctx.strokeRect(px, py, padW, padH);
+
+      ctx.fillStyle = pad.color;
+      ctx.font = 'bold 15px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(pad.label, px + (padW/2), py + (padH/2) + 5); // Uses the respective name of that pad & +5 so that text looks like its more centered
+    });
+
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(startX - 20, startY - 20, gridW + 40, gridH + 40); // outer box for the grid, giving it a more real life drum pad like feel and padding for all the four sides
+
+    ctx.fillStyle = '#339af0'
+    ctx.font = ('30px cursive'); // cursive font like in my sketch
+    ctx.textAlign = 'center';
+    ctx.fillText('Music Pad', c.width/2, startY+gridH + 65); //text centered(horizontally) and aligned below the outer frame vertically
   }
 
 draw();
