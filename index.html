@@ -26,6 +26,70 @@
 
   let activePad = -1;
 
+  let audioCtx;
+
+  function playSound(w) {
+    audioCtx = new window.AudioContext;
+
+    const t = audioCtx.currentTime;
+    const Gain = audioCtx.createGain();
+    Gain.connect(audioCtx.destination);
+
+    if (w === 1 || w === 2) {
+      const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate, audioCtx.sampleRate);
+      const channelData = buffer.getChannelData(0);
+      for (let i=0; i < channelData.length; i++ ) {
+        channelData[i] = Math.random() * 2 - 1; //fills the audio memory buffer w/ numbers between 1 and -1 to produce pur white noise
+      }
+
+      const Bsource = audioCtx.createBufferSource();
+      const filter = audioCtx.createBiquadFilter();
+
+      Bsource.buffer = buffer;
+      filter.type = 'highpass';
+      filter.frequency.value = (w===2) ? 7000 : 1000; //7khz for hi-hat and 1khz for snare
+      
+      Bsource.connect(filter);
+      filter.connect(Gain);
+
+      Gain.gain.setValueAtTime(0.5, t);
+      Gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+      Bsource.start(t);
+  }
+
+  else {
+    const oscill = audioCtx.createOscillator();
+    oscill.connect(Gain);
+
+    if (w === 0) { //for kick drum [150Hz to 30Hz]
+      oscill.frequency.setValueAtTime(150,t);
+      oscill.frequency.exponentialRampToValueAtTime(30, t + 0.3);
+      Gain.gain.setValueAtTime(1.0, t);
+    }
+    else if (w === 3) { //for piano
+      oscill.type = 'triangle';
+      oscill.frequency.value = 523; //plays 523Hz
+      Gain.gain.setValueAtTime(0.4, t);
+    }
+    else if (w===4) { //for Bass [110Hz to 30Hz]
+      oscill.type = 'sawtooth';
+      oscill.frequency.setValueAtTime(110, t);
+      oscill.frequency.exponentialRampToValueAtTime(30, t + 0.25);
+      Gain.gain.setValueAtTime(0.5, t);
+    }
+    else if (w === 5) { //for Electro [1200hz to 50hz]
+      oscill.type = 'square';
+      oscill.frequency.setValueAtTime(1200, t);
+      oscill.frequency.exponentialRampToValueAtTime(50, t + 0.12);
+      Gain.gain.setValueAtTime(0.2, t);
+    }
+
+    Gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+    oscill.start(t);
+    oscill.stop(t + 3);
+  }
+}
+
   const handleInput = (e) => {
     const rect = c.getBoundingClientRect();
     const posx = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
@@ -39,6 +103,7 @@
 
       if (posx >= px && posx <= px+padW && posy >= py && posy <= py+padH) { //checks if the click/tap fell within the rectangle's coordinates
         activePad = i;
+        playSound(i);
         draw();
 
         setTimeout(() => { // the selected pad will be active for 100ms, helpful for press-down effect
